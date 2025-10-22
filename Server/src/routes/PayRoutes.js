@@ -1,13 +1,17 @@
 // server/src/routes/payments.js
+
 const express = require("express");
 const jwt = require("jsonwebtoken");
 const Appointment = require("../../model/Appointments");
 const Payment = require("../../model/Payment");
+const User = require("../../model/User");
+const { notifyPaymentConfirmed } = require("../lib/notify");
+const { toIsoNoMs } = require("../lib/slots");
 
 const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET || "dev-secret-change-me";
 
-//  async wrapper
+// Tiny async wrapper
 const asyncH = (fn) => (req, res, next) => Promise.resolve(fn(req, res, next)).catch(next);
 
 // Bearer auth -> req.userId
@@ -24,12 +28,12 @@ function requireAuth(req, res, next) {
   }
 }
 
-// Build QR payload string
+// Helper to build QR payload string
 function buildQrPayload(payment) {
   return `VXPAY|${payment.reference}|${payment.amount}|${payment.appointment}`;
 }
 
-// Post 
+//POST /api/payments/initiate
 router.post("/initiate", requireAuth, asyncH(async (req, res) => {
   const { appointmentId } = req.body || {};
   if (!appointmentId) return res.status(400).json({ error: "appointmentId is required" });
@@ -47,7 +51,7 @@ router.post("/initiate", requireAuth, asyncH(async (req, res) => {
     return res.status(409).json({ error: `cannot initiate payment for status ${appt.status}` });
   }
 
-  // Create (or reuse) a PENDING payment for this appointment
+  // Create a PENDING payment for this appointment
   let payment = await Payment.findOne({ appointment: appt._id, patient: req.userId, status: Payment.STATUS.PENDING });
   if (!payment) {
     payment = await Payment.create({
@@ -66,7 +70,7 @@ router.post("/initiate", requireAuth, asyncH(async (req, res) => {
   res.status(201).json({ payment, qrPayload });
 }));
 
-// Post
+// POST /api/payments/confirm
 router.post("/confirm", requireAuth, asyncH(async (req, res) => {
   const { reference } = req.body || {};
   if (!reference) return res.status(400).json({ error: "reference is required" });
@@ -91,10 +95,27 @@ router.post("/confirm", requireAuth, asyncH(async (req, res) => {
     await appt.save();
   }
 
+// Send fake notification
+  try {
+    const patient = await User.findById(req.userId).select("email name").lean();
+    await notifyPaymentConfirmed({
+      patientEmail: patient?.email,
+      patientName: patient?.name,
+      amount: payment.amount,
+      reference: payment.reference,
+      appointmentId: String(payment.appointment),
+      startAtIso: appt ? toIsoNoMs(appt.startAt) : null,
+      hospitalName: payment.hospitalName,
+      vaccineName: payment.vaccineName,
+    });
+  } catch (e) {
+    console.warn("notifyPaymentConfirmed failed:", e.message);
+  }
+
   res.json({ payment, appointmentStatus: appt?.status || null });
 }));
 
-//Get 
+// GET `/api/payments/my`
 router.get("/my", requireAuth, asyncH(async (req, res) => {
   const payments = await Payment.find({ patient: req.userId })
     .sort({ createdAt: -1 })

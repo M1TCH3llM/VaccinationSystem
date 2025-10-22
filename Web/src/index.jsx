@@ -1,0 +1,102 @@
+// web/src/index.jsx
+import React from "react";
+import { createRoot } from "react-dom/client";
+import { BrowserRouter, Routes, Route, Link, Navigate } from "react-router-dom";
+import { Provider } from "react-redux";
+import { configureStore } from "@reduxjs/toolkit";
+
+// Redux store 
+const store = configureStore({
+  reducer: {},
+});
+
+// Temporary pages 
+function Home() {
+  return (
+    <div className="container py-4">
+      <h1 className="h3 mb-3">Vaccination System</h1>
+      <p className="text-secondary">
+        Welcome. Use the nav to explore Auth, Hospitals, Vaccines, and Appointments.
+      </p>
+      <div className="alert alert-secondary">
+        Frontend is wired: React + Router + Redux + Bootstrap (dark).
+      </div>
+    </div>
+  );
+}
+
+function NotFound() {
+  return (
+    <div className="container py-4">
+      <h1 className="h4">404 — Not Found</h1>
+      <p className="text-secondary">The page you’re looking for does not exist.</p>
+    </div>
+  );
+}
+
+// Temporary App shell
+function App() {
+  return (
+    <>
+      <nav className="navbar navbar-expand-lg navbar-dark bg-dark border-bottom">
+        <div className="container">
+          <Link className="navbar-brand" to="/">Vax</Link>
+          <button
+            className="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarsMain"
+            aria-controls="navbarsMain"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+          >
+            <span className="navbar-toggler-icon"></span>
+          </button>
+
+          <div className="collapse navbar-collapse" id="navbarsMain">
+            <ul className="navbar-nav me-auto mb-2 mb-lg-0">
+              <li className="nav-item"><Link className="nav-link" to="/">Home</Link></li>
+              <li className="nav-item"><Link className="nav-link" to="/auth">Auth</Link></li>
+              <li className="nav-item"><Link className="nav-link" to="/hospitals">Hospitals</Link></li>
+              <li className="nav-item"><Link className="nav-link" to="/vaccines">Vaccines</Link></li>
+              <li className="nav-item"><Link className="nav-link" to="/appointments">Appointments</Link></li>
+              <li className="nav-item"><Link className="nav-link" to="/payments">Payments</Link></li>
+              <li className="nav-item"><Link className="nav-link" to="/reports">Reports</Link></li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+
+      <Routes>
+        <Route index element={<Home />} />
+        {/* placeholders for upcoming steps */}
+        <Route path="/auth" element={<div className="container py-4">Auth page coming soon…</div>} />
+        <Route path="/hospitals" element={<div className="container py-4">Hospitals page coming soon…</div>} />
+        <Route path="/vaccines" element={<div className="container py-4">Vaccines page coming soon…</div>} />
+        <Route path="/appointments" element={<div className="container py-4">Appointments page coming soon…</div>} />
+        <Route path="/payments" element={<div className="container py-4">Payments page coming soon…</div>} />
+        <Route path="/reports" element={<div className="container py-4">Reports page coming soon…</div>} />
+        <Route path="/404" element={<NotFound />} />
+        <Route path="*" element={<Navigate to="/404" replace />} />
+      </Routes>
+
+      <footer className="mt-auto py-3 border-top">
+        <div className="container text-secondary small">
+          © {new Date().getFullYear()} Vaccination System
+        </div>
+      </footer>
+    </>
+  );
+}
+
+// Render
+const root = createRoot(document.getElementById("root"));
+root.render(
+  <React.StrictMode>
+    <Provider store={store}>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </Provider>
+  </React.StrictMode>
+);
