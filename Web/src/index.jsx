@@ -3,23 +3,18 @@ import React from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter, Routes, Route, Link, Navigate } from "react-router-dom";
 import { Provider } from "react-redux";
-import { configureStore } from "@reduxjs/toolkit";
+import store from "./store"; 
 
-// Redux store 
-const store = configureStore({
-  reducer: {},
-});
+import AuthPage from "./features/auth/AuthPage";
 
-// Temporary pages 
 function Home() {
   return (
     <div className="container py-4">
       <h1 className="h3 mb-3">Vaccination System</h1>
       <p className="text-secondary">
-        Welcome. Use the nav to explore Auth, Hospitals, Vaccines, and Appointments.
+        Welcome.
       </p>
       <div className="alert alert-secondary">
-        Frontend is wired: React + Router + Redux + Bootstrap (dark).
       </div>
     </div>
   );
@@ -34,7 +29,6 @@ function NotFound() {
   );
 }
 
-// Temporary App shell
 function App() {
   return (
     <>
@@ -69,8 +63,7 @@ function App() {
 
       <Routes>
         <Route index element={<Home />} />
-        {/* placeholders for upcoming steps */}
-        <Route path="/auth" element={<div className="container py-4">Auth page coming soon…</div>} />
+        <Route path="/auth" element={<AuthPage />} />
         <Route path="/hospitals" element={<div className="container py-4">Hospitals page coming soon…</div>} />
         <Route path="/vaccines" element={<div className="container py-4">Vaccines page coming soon…</div>} />
         <Route path="/appointments" element={<div className="container py-4">Appointments page coming soon…</div>} />
@@ -89,7 +82,6 @@ function App() {
   );
 }
 
-// Render
 const root = createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
