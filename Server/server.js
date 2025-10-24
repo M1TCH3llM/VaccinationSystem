@@ -41,6 +41,7 @@ app.get("/api/health", (_req, res) => {
 app.use("/api/auth", require("./src/routes/auth"));
 app.use("/api/appointments", require("./src/routes/AptRoutes"));
 app.use("/api/payments", require("./src/routes/PayRoutes"));
+app.use("/api/hospitals", require("./src/routes/hospitals"));
 
 
 // 404 handler

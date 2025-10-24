@@ -1,8 +1,9 @@
-// web/src/api/auth.js
+// web/src/api/hospitals.js
 
-const API_BASE = "/api/auth";
+const API_BASE = "/api/hospitals";
 
-async function jfetch(path, { method = "GET", token, body } = {}) {
+// JSON fetch helper
+async function jfetch(path, { method = "GET", body, token } = {}) {
   const headers = { "Content-Type": "application/json" };
   if (token) headers.Authorization = `Bearer ${token}`;
 
@@ -24,14 +25,12 @@ async function jfetch(path, { method = "GET", token, body } = {}) {
   return data;
 }
 
-export function register(payload) {
-  return jfetch("/register", { method: "POST", body: payload });
+// GET /api/hospitals 
+export function list() {
+  return jfetch("");
 }
 
-export function login(payload) { 
-  return jfetch("/login", { method: "POST", body: payload });
-}
-
-export function me(token) {
-  return jfetch("/me", { token });
+// GET /api/hospitals/:id 
+export function getById(id) {
+  return jfetch(`/${id}`);
 }

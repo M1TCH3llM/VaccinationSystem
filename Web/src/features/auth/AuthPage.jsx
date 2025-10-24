@@ -39,23 +39,13 @@ export default function AuthPage() {
         });
       }
       dispatch(setCredentials(resp));
-      nav("/"); // go home after auth
+      nav("/");
     } catch (err) {
       dispatch(setError(err.message || "Authentication failed"));
     }
   }
 
-  // Demo credentials component... remove later
-  function DemoCreds() {
-    return (
-      <div className="small text-secondary">
-        <div className="fw-semibold">Demo accounts (from seed):</div>
-        <div>Admin — <code>admin@vax.local</code> / <code>Admin@123</code></div>
-        <div>Patient — <code>patient@vax.local</code> / <code>Patient@123</code></div>
-      </div>
-    );
-  }
-
+  
   if (user) {
     return (
       <div className="container py-4" style={{ maxWidth: 520 }}>
@@ -64,7 +54,6 @@ export default function AuthPage() {
           <div className="card-body">
             <div className="mb-2"><span className="text-secondary">Email:</span> {user.email}</div>
             <div className="mb-2"><span className="text-secondary">Role:</span> {user.role}</div>
-            <div className="mb-2"><span className="text-secondary">Approved:</span> {String(user.isApproved ?? user.approved ?? false)}</div>
             <button
               className="btn btn-outline-light mt-2"
               onClick={() => dispatch(logout())}
@@ -104,7 +93,7 @@ export default function AuthPage() {
 
           {mode === "register" && (
             <div className="mb-3">
-              <label className="form-label">Name (optional)</label>
+              <label className="form-label">Name</label>
               <input
                 type="text"
                 name="name"
@@ -158,9 +147,7 @@ export default function AuthPage() {
                 <option value="HOSPITAL">Hospital</option>
                 <option value="ADMIN">Admin</option>
               </select>
-              <div className="form-text text-secondary">
-                Most users should choose <strong>Patient</strong>.
-              </div>
+              
             </div>
           )}
 
@@ -169,7 +156,7 @@ export default function AuthPage() {
           </button>
 
           <div className="mt-3">
-            <DemoCreds />
+        
           </div>
         </div>
       </form>

@@ -6,6 +6,7 @@ import { Provider } from "react-redux";
 import store from "./store"; 
 
 import AuthPage from "./features/auth/AuthPage";
+import HospitalsPage from "./features/hospitals/HospitalsPage";
 
 function Home() {
   return (
@@ -64,7 +65,7 @@ function App() {
       <Routes>
         <Route index element={<Home />} />
         <Route path="/auth" element={<AuthPage />} />
-        <Route path="/hospitals" element={<div className="container py-4">Hospitals page coming soon…</div>} />
+        <Route path="/hospitals" element={<HospitalsPage />} />
         <Route path="/vaccines" element={<div className="container py-4">Vaccines page coming soon…</div>} />
         <Route path="/appointments" element={<div className="container py-4">Appointments page coming soon…</div>} />
         <Route path="/payments" element={<div className="container py-4">Payments page coming soon…</div>} />
