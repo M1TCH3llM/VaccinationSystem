@@ -6,7 +6,7 @@ let transporter = null;
 async function getTransporter() {
   if (!ENABLE_REAL_SEND) return null;
 
-  // Example Nodemailer SMTP config (disabled by default)
+  // Example Nodemailer SMTP config 
   if (!transporter) {
     const nodemailer = require("nodemailer");
     transporter = nodemailer.createTransport({

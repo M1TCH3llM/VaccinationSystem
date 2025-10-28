@@ -47,7 +47,7 @@ AppointmentSchema.index(
   { unique: true, name: "uniq_hospital_slot" }
 );
 
-// Helpful compound index for patient timeline
+// compound index for patient timeline
 AppointmentSchema.index({ patient: 1, startAt: 1 });
 
 // Consistent JSON

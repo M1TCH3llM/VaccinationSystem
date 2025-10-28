@@ -42,6 +42,7 @@ app.use("/api/auth", require("./src/routes/auth"));
 app.use("/api/appointments", require("./src/routes/AptRoutes"));
 app.use("/api/payments", require("./src/routes/PayRoutes"));
 app.use("/api/hospitals", require("./src/routes/hospitals"));
+app.use("/api/vaccines", require("./src/routes/vaccines"));
 
 
 // 404 handler

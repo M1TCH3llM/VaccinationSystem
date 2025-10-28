@@ -3,10 +3,14 @@ import React from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter, Routes, Route, Link, Navigate } from "react-router-dom";
 import { Provider } from "react-redux";
-import store from "./store"; 
+import store from "./store";
 
 import AuthPage from "./features/auth/AuthPage";
 import HospitalsPage from "./features/hospitals/HospitalsPage";
+import VaccinesPage from "./features/vaccines/VaccinesPage";
+import AppointmentsPage from "./features/appointments/AppointmentPage";
+import PaymentsPage from "./features/payments/PaymentsPage";
+import ReportsPage from "./features/reports/ReportsPage";
 
 function Home() {
   return (
@@ -66,10 +70,10 @@ function App() {
         <Route index element={<Home />} />
         <Route path="/auth" element={<AuthPage />} />
         <Route path="/hospitals" element={<HospitalsPage />} />
-        <Route path="/vaccines" element={<div className="container py-4">Vaccines page coming soon…</div>} />
-        <Route path="/appointments" element={<div className="container py-4">Appointments page coming soon…</div>} />
-        <Route path="/payments" element={<div className="container py-4">Payments page coming soon…</div>} />
-        <Route path="/reports" element={<div className="container py-4">Reports page coming soon…</div>} />
+        <Route path="/vaccines" element={<VaccinesPage />} />
+        <Route path="/appointments" element={<AppointmentsPage />} />
+        <Route path="/payments" element={<PaymentsPage />} />
+        <Route path="/reports" element={<ReportsPage />} />
         <Route path="/404" element={<NotFound />} />
         <Route path="*" element={<Navigate to="/404" replace />} />
       </Routes>

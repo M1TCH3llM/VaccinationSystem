@@ -1,8 +1,6 @@
-// web/src/api/vaccines.js
+// web/src/api/payments.js
+const API_BASE = "/api/payments";
 
-const API_BASE = "/api/vaccines";
-
-// Simple JSON fetch helper
 async function jfetch(path, { method = "GET", body, token } = {}) {
   const headers = { "Content-Type": "application/json" };
   if (token) headers.Authorization = `Bearer ${token}`;
@@ -25,12 +23,17 @@ async function jfetch(path, { method = "GET", body, token } = {}) {
   return data;
 }
 
-// GET /api/vaccines
-export function list() {
-  return jfetch("");
+// Start a payment
+export function initiate(appointmentId, token) {
+  return jfetch("/initiate", { method: "POST", body: { appointmentId }, token });
 }
 
-// GET /api/vaccines/:id
-export function getById(id) {
-  return jfetch(`/${id}`);
+// Confirm a payment by reference
+export function confirm(reference, token) {
+  return jfetch("/confirm", { method: "POST", body: { reference }, token });
+}
+
+// List my payments
+export function my(token) {
+  return jfetch("/my", { token });
 }
