@@ -11,6 +11,7 @@ import VaccinesPage from "./features/vaccines/VaccinesPage";
 import AppointmentsPage from "./features/appointments/AppointmentPage";
 import PaymentsPage from "./features/payments/PaymentsPage";
 import ReportsPage from "./features/reports/ReportsPage";
+import ManageAppt from "./features/admin/ManageAppt";
 
 function Home() {
   return (
@@ -61,6 +62,7 @@ function App() {
               <li className="nav-item"><Link className="nav-link" to="/appointments">Appointments</Link></li>
               <li className="nav-item"><Link className="nav-link" to="/payments">Payments</Link></li>
               <li className="nav-item"><Link className="nav-link" to="/reports">Reports</Link></li>
+              <li className="nav-item"><Link className="nav-link" to="/admin/manage-appointments">Manage Appt</Link></li>
             </ul>
           </div>
         </div>
@@ -76,6 +78,7 @@ function App() {
         <Route path="/reports" element={<ReportsPage />} />
         <Route path="/404" element={<NotFound />} />
         <Route path="*" element={<Navigate to="/404" replace />} />
+        <Route path="/admin/manage-appointments" element={<ManageAppt />} />
       </Routes>
 
       <footer className="mt-auto py-3 border-top">

@@ -43,6 +43,8 @@ app.use("/api/appointments", require("./src/routes/AptRoutes"));
 app.use("/api/payments", require("./src/routes/PayRoutes"));
 app.use("/api/hospitals", require("./src/routes/hospitals"));
 app.use("/api/vaccines", require("./src/routes/vaccines"));
+app.use("/api/reports", require("./src/routes/reports"));
+app.use("/api/admin", require("./src/routes/api/admin"));
 
 
 // 404 handler
@@ -70,3 +72,10 @@ start().catch((err) => {
   console.error("Startup failure:", err);
   process.exit(1);
 });
+
+
+// Better UI for reports page 
+// when register ask for gender when logging in as user
+
+// Vaccine page when logged in as admin allow edit to vaccines as well as add new vaccines same as hospitals
+// get actual mailer service working for payments and appointment confirmations

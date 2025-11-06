@@ -1,9 +1,15 @@
-// web/src/features/auth/AuthPage.jsx
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setLoading, setError, setCredentials, logout, selectAuth } from "../../store";
 import * as api from "../../api/auth";
 import { useNavigate } from "react-router-dom";
+
+const GENDER_OPTIONS = [
+  { value: "unspecified", label: "Prefer not to say" },
+  { value: "male", label: "Male" },
+  { value: "female", label: "Female" },
+  { value: "other", label: "Other" },
+];
 
 export default function AuthPage() {
   const dispatch = useDispatch();
@@ -15,7 +21,8 @@ export default function AuthPage() {
     email: "",
     password: "",
     name: "",
-    role: "PATIENT", // ADMIN | HOSPITAL | PATIENT
+    gender: "unspecified",
+    age: "", // NEW (string in UI, cast before send)
   });
 
   const onChange = (e) => {
@@ -29,13 +36,22 @@ export default function AuthPage() {
     try {
       let resp;
       if (mode === "login") {
-        resp = await api.login({ email: form.email.trim(), password: form.password });
+        resp = await api.login({
+          email: form.email.trim(),
+          password: form.password,
+        });
       } else {
+        // Backend requires age for patients (and registration is forced to PATIENT)
+        const ageNum = Number(form.age);
+        if (!Number.isFinite(ageNum) || !Number.isInteger(ageNum) || ageNum < 0 || ageNum > 120) {
+          throw new Error("Please enter a valid age between 0 and 120.");
+        }
         resp = await api.register({
           email: form.email.trim(),
           password: form.password,
           name: form.name.trim() || undefined,
-          role: form.role,
+          gender: form.gender,
+          age: ageNum,
         });
       }
       dispatch(setCredentials(resp));
@@ -45,7 +61,6 @@ export default function AuthPage() {
     }
   }
 
-  
   if (user) {
     return (
       <div className="container py-4" style={{ maxWidth: 520 }}>
@@ -54,6 +69,16 @@ export default function AuthPage() {
           <div className="card-body">
             <div className="mb-2"><span className="text-secondary">Email:</span> {user.email}</div>
             <div className="mb-2"><span className="text-secondary">Role:</span> {user.role}</div>
+            {user.gender && (
+              <div className="mb-2">
+                <span className="text-secondary">Gender:</span> {user.gender}
+              </div>
+            )}
+            {typeof user.age !== "undefined" && (
+              <div className="mb-2">
+                <span className="text-secondary">Age:</span> {user.age}
+              </div>
+            )}
             <button
               className="btn btn-outline-light mt-2"
               onClick={() => dispatch(logout())}
@@ -135,29 +160,46 @@ export default function AuthPage() {
           </div>
 
           {mode === "register" && (
-            <div className="mb-3">
-              <label className="form-label">Role</label>
-              <select
-                name="role"
-                className="form-select"
-                value={form.role}
-                onChange={onChange}
-              >
-                <option value="PATIENT">Patient</option>
-                <option value="HOSPITAL">Hospital</option>
-                <option value="ADMIN">Admin</option>
-              </select>
-              
-            </div>
+            <>
+              {/* Gender */}
+              <div className="mb-3">
+                <label className="form-label">Gender</label>
+                <select
+                  name="gender"
+                  className="form-select"
+                  value={form.gender}
+                  onChange={onChange}
+                >
+                  {GENDER_OPTIONS.map(o => (
+                    <option key={o.value} value={o.value}>{o.label}</option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Age (required for patients) */}
+              <div className="mb-3">
+                <label className="form-label">Age</label>
+                <input
+                  required
+                  type="number"
+                  name="age"
+                  className="form-control"
+                  value={form.age}
+                  onChange={onChange}
+                  placeholder="e.g., 32"
+                  min={0}
+                  max={120}
+                  inputMode="numeric"
+                />
+              </div>
+            </>
           )}
 
           <button type="submit" className="btn btn-light" disabled={loading}>
             {loading ? "Please wait…" : mode === "login" ? "Sign in" : "Create account"}
           </button>
 
-          <div className="mt-3">
-        
-          </div>
+          <div className="mt-3"></div>
         </div>
       </form>
     </div>

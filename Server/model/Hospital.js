@@ -1,4 +1,4 @@
-// server/src/models/Hospital.js
+// server/model/Hospital.js
 const { Schema, model } = require("mongoose");
 
 const HOSPITAL_TYPES = {

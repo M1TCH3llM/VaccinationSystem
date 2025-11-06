@@ -20,7 +20,7 @@ export default function PaymentsPage() {
   const [qr, setQr] = useState({}); 
 
   const needsPayment = useMemo(
-    () => appointments.filter(a => a.status === "SCHEDULED"),
+    () => appointments.filter(a => a.status === "SCHEDULED" ),
     [appointments]
   );
 

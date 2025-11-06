@@ -1,4 +1,5 @@
-// server/src/routes/appointments.js
+// VacineTracker/Server/src/routes/AptRoutes.js
+
 const express = require("express");
 const jwt = require("jsonwebtoken");
 const Appointment = require("../../model/Appointments");

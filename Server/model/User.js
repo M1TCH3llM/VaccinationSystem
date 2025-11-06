@@ -1,4 +1,4 @@
-// server/src/models/User.js
+// server/model/User.js
 const { Schema, model } = require("mongoose");
 const crypto = require("crypto");
 
@@ -45,7 +45,7 @@ const UserSchema = new Schema(
     diseases: [{ type: String, trim: true }], // pre-existing conditions
     medicalCertificate: { type: String, trim: true }, // URL or file ref
 
-    // Approval flag (for approver workflow)
+    // Approval flag change to false by default when you get admin approval feature
     isApproved: { type: Boolean, default: false },
   },
   { timestamps: true }

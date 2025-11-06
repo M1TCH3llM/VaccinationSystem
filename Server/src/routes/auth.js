@@ -1,4 +1,3 @@
-// server/src/routes/auth.js
 const express = require("express");
 const jwt = require("jsonwebtoken");
 const User = require("../../model/User");
@@ -8,8 +7,9 @@ const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET || "dev-secret-change-me";
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || "7d";
 
-// Small helper to wrap async route handlers
 const asyncH = (fn) => (req, res, next) => Promise.resolve(fn(req, res, next)).catch(next);
+
+const ALLOWED_GENDER = ["male", "female", "other", "unspecified"];
 
 function signToken(user) {
   const payload = {
@@ -20,21 +20,38 @@ function signToken(user) {
   return jwt.sign(payload, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
 }
 
-
 router.post("/register", asyncH(async (req, res) => {
-  const { email, password, role, ...profile } = req.body || {};
+  const { email, password, name, gender, age, ...rest } = req.body || {};
 
   if (!email || !password) {
     return res.status(400).json({ error: "email and password are required" });
   }
 
-  const exists = await User.findOne({ email: String(email).toLowerCase().trim() }).lean();
+  const normalizedEmail = String(email).toLowerCase().trim();
+  const exists = await User.findOne({ email: normalizedEmail }).lean();
   if (exists) return res.status(409).json({ error: "email already registered" });
 
+  const ageNum = Number(age);
+  if (!Number.isFinite(ageNum) || !Number.isInteger(ageNum) || ageNum < 0 || ageNum > 120) {
+    return res.status(400).json({ error: "valid age (0–120) is required for patient registration" });
+  }
+
+  let safeGender = undefined;
+  if (typeof gender === "string") {
+    const g = gender.toLowerCase().trim();
+    if (!ALLOWED_GENDER.includes(g)) {
+      return res.status(400).json({ error: `invalid gender. allowed: ${ALLOWED_GENDER.join(", ")}` });
+    }
+    safeGender = g;
+  }
+
   const user = new User({
-    email: String(email).toLowerCase().trim(),
-    role: role && User.ROLES[role.toUpperCase()] ? role.toUpperCase() : undefined,
-    ...profile,
+    email: normalizedEmail,
+    role: User.ROLES.PATIENT,    
+    name: name?.trim() || undefined,
+    gender: safeGender,          
+    age: ageNum,                 
+    ...rest,                   
   });
 
   await user.setPassword(password);
@@ -43,7 +60,6 @@ router.post("/register", asyncH(async (req, res) => {
   const token = signToken(user);
   res.status(201).json({ token, user: user.toJSON() });
 }));
-
 
 router.post("/login", asyncH(async (req, res) => {
   const { email, password } = req.body || {};
@@ -60,7 +76,6 @@ router.post("/login", asyncH(async (req, res) => {
   const token = signToken(user);
   res.json({ token, user: user.toJSON() });
 }));
-
 
 router.get("/me", asyncH(async (req, res) => {
   const auth = req.headers.authorization || "";

@@ -24,25 +24,21 @@ async function jfetch(path, { method = "GET", body, token } = {}) {
   return data;
 }
 
-// update vaccine Dose number if already vaccinated
 export function updateDose(appointmentId, doseNumber, token) {
 
   return jfetch(`/${appointmentId}/dose`, { method: "PUT", body: { doseNumber }, token });
 }
 
-// List available slots for a hospital + date
-// /api/appointments/availability?hospitalId=...&date=YYYY-MM-DD
+
 export function getAvailability(hospitalId, date) {
   return jfetch(`/availability?hospitalId=${hospitalId}&date=${date}`);
 }
 
-// Book a new appointment
-// body: { hospitalId, vaccineId, startAt }
+
 export function book(payload, token) {
   return jfetch("", { method: "POST", body: payload, token });
 }
 
-// Get current user’s appointments
 export function myAppointments(token) {
   return jfetch("/my", { token });
 }

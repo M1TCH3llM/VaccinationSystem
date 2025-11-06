@@ -1,4 +1,4 @@
-// server/src/models/Vaccine.js
+// server/model/Vaccine.js
 const { Schema, model } = require("mongoose");
 
 const VaccineSchema = new Schema(
