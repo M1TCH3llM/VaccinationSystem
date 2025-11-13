@@ -12,6 +12,9 @@ import AppointmentsPage from "./features/appointments/AppointmentPage";
 import PaymentsPage from "./features/payments/PaymentsPage";
 import ReportsPage from "./features/reports/ReportsPage";
 import ManageAppt from "./features/admin/ManageAppt";
+import ProtectedRoute from "./components/ProtectedRouts";
+import AdminPage from "./features/admin/AdminPage";
+
 
 function Home() {
   return (
@@ -62,7 +65,7 @@ function App() {
               <li className="nav-item"><Link className="nav-link" to="/appointments">Appointments</Link></li>
               <li className="nav-item"><Link className="nav-link" to="/payments">Payments</Link></li>
               <li className="nav-item"><Link className="nav-link" to="/reports">Reports</Link></li>
-              <li className="nav-item"><Link className="nav-link" to="/admin/manage-appointments">Manage Appt</Link></li>
+              <li className="nav-item"><Link className="nav-link" to="/admin">Admin</Link></li>        
             </ul>
           </div>
         </div>
@@ -78,7 +81,22 @@ function App() {
         <Route path="/reports" element={<ReportsPage />} />
         <Route path="/404" element={<NotFound />} />
         <Route path="*" element={<Navigate to="/404" replace />} />
-        <Route path="/admin/manage-appointments" element={<ManageAppt />} />
+        <Route
+          path="/reports"
+          element={
+            <ProtectedRoute role="ADMIN">
+              <ReportsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute role="ADMIN">
+              <AdminPage />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
 
       <footer className="mt-auto py-3 border-top">
@@ -86,6 +104,22 @@ function App() {
           © {new Date().getFullYear()} Vaccination System
         </div>
       </footer>
+    </>
+  );
+}
+
+function AdminNavLinks() {
+  const user = useSelector(selectUser);
+
+  if (user?.role !== "ADMIN") {
+    return null; // Don't show anything if not an Admin
+  }
+
+  // Show these links only to Admins
+  return (
+    <>
+      <li className="nav-item"><Link className="nav-link" to="/reports">Reports</Link></li>
+      <li className="nav-item"><Link className="nav-link" to="/admin">Admin</Link></li>
     </>
   );
 }

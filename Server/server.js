@@ -74,8 +74,4 @@ start().catch((err) => {
 });
 
 
-// Better UI for reports page 
-// when register ask for gender when logging in as user
-
-// Vaccine page when logged in as admin allow edit to vaccines as well as add new vaccines same as hospitals
-// get actual mailer service working for payments and appointment confirmations
+// Splitting and bundelling 
