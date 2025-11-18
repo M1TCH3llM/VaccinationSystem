@@ -74,4 +74,39 @@ start().catch((err) => {
 });
 
 
-// Splitting and bundelling 
+// Implement OAuth
+
+// import React from 'react';
+// import ReactDOM from 'react-dom/client';
+// import App from './App';
+// import { GoogleOAuthProvider } from '@react-oauth/google';
+
+// const root = ReactDOM.createRoot(document.getElementById('root'));
+// root.render(
+//   <React.StrictMode>
+//     <GoogleOAuthProvider clientId="YOUR_GOOGLE_CLIENT_ID">
+//       <App />
+//     </GoogleOAuthProvider>
+//   </React.StrictMode>
+// );
+
+// import React from 'react';
+// import { useGoogleLogin } from '@react-oauth/google';
+
+// function MyLoginComponent() {
+// const login = useGoogleLogin({
+// onSuccess: tokenResponse => {
+// console.log('Login Success:', tokenResponse);
+// // You can send this tokenResponse to your backend for verification and user management
+// },
+// onError: errorResponse => {
+// console.error('Login Failed:', errorResponse);
+// },
+// });
+
+// return (
+// <button onClick={() => login()}>Sign in with Google</button>
+// );
+// }
+
+// export default MyLoginComponent;

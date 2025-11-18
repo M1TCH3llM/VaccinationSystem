@@ -1,19 +1,26 @@
 // web/src/index.jsx
-import React from "react";
+import React, {Suspense, lazy} from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter, Routes, Route, Link, Navigate } from "react-router-dom";
-import { Provider } from "react-redux";
-import store from "./store";
+import { Provider, useSelector } from "react-redux";
+import store, { selectUser } from "./store";
 
-import AuthPage from "./features/auth/AuthPage";
-import HospitalsPage from "./features/hospitals/HospitalsPage";
-import VaccinesPage from "./features/vaccines/VaccinesPage";
-import AppointmentsPage from "./features/appointments/AppointmentPage";
-import PaymentsPage from "./features/payments/PaymentsPage";
-import ReportsPage from "./features/reports/ReportsPage";
-import ManageAppt from "./features/admin/ManageAppt";
-import ProtectedRoute from "./components/ProtectedRouts";
-import AdminPage from "./features/admin/AdminPage";
+import ProtectedRoute from "../src/components/ProtectedRouts";
+
+// --- Lazy loaded pages (This is all correct) ---
+const AuthPage = lazy(() => import("./features/auth/AuthPage"));
+const HospitalsPage = lazy(() => import("./features/hospitals/HospitalsPage"));
+const VaccinesPage = lazy(() => import("./features/vaccines/VaccinesPage"));
+const AppointmentsPage = lazy(() => import("./features/appointments/AppointmentPage"));
+const PaymentsPage = lazy(() => import("./features/payments/PaymentsPage"));
+const ReportsPage = lazy(() => import("./features/reports/ReportsPage"));
+const AdminPage = lazy(() => import("./features/admin/AdminPage"));
+
+const PageLoader = () => (
+  <div className="container py-4">
+    <p className="text-secondary">Loading page...</p>
+  </div>
+);
 
 
 function Home() {
@@ -64,13 +71,14 @@ function App() {
               <li className="nav-item"><Link className="nav-link" to="/vaccines">Vaccines</Link></li>
               <li className="nav-item"><Link className="nav-link" to="/appointments">Appointments</Link></li>
               <li className="nav-item"><Link className="nav-link" to="/payments">Payments</Link></li>
-              <li className="nav-item"><Link className="nav-link" to="/reports">Reports</Link></li>
-              <li className="nav-item"><Link className="nav-link" to="/admin">Admin</Link></li>        
+              
+              <AdminNavLinks />
             </ul>
           </div>
         </div>
       </nav>
 
+<Suspense fallback={<PageLoader />}>
       <Routes>
         <Route index element={<Home />} />
         <Route path="/auth" element={<AuthPage />} />
@@ -78,9 +86,12 @@ function App() {
         <Route path="/vaccines" element={<VaccinesPage />} />
         <Route path="/appointments" element={<AppointmentsPage />} />
         <Route path="/payments" element={<PaymentsPage />} />
-        <Route path="/reports" element={<ReportsPage />} />
+        
+        {/* --- 3. FIX: Removed the duplicate public /reports route --- */}
+        
         <Route path="/404" element={<NotFound />} />
         <Route path="*" element={<Navigate to="/404" replace />} />
+        
         <Route
           path="/reports"
           element={
@@ -98,6 +109,7 @@ function App() {
           }
         />
       </Routes>
+      </Suspense>
 
       <footer className="mt-auto py-3 border-top">
         <div className="container text-secondary small">
@@ -112,7 +124,7 @@ function AdminNavLinks() {
   const user = useSelector(selectUser);
 
   if (user?.role !== "ADMIN") {
-    return null; // Don't show anything if not an Admin
+    return null;
   }
 
   // Show these links only to Admins
